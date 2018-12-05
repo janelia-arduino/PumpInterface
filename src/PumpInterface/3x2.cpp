@@ -10,7 +10,7 @@
 
 #if defined(__MK20DX256__)
 
-namespace pump_controller
+namespace pump_interface
 {
 namespace constants
 {

@@ -8,13 +8,13 @@
 #include "Constants.h"
 
 
-namespace pump_controller
+namespace pump_interface
 {
 namespace constants
 {
-CONSTANT_STRING(device_name,"pump_controller");
+CONSTANT_STRING(device_name,"pump_interface");
 
-CONSTANT_STRING(firmware_name,"PumpController");
+CONSTANT_STRING(firmware_name,"PumpInterface");
 // Use semantic versioning http://semver.org/
 const modular_server::FirmwareInfo firmware_info =
 {

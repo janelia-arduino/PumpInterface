@@ -1,20 +1,20 @@
 // ----------------------------------------------------------------------------
-// PumpController.cpp
+// PumpInterface.cpp
 //
 //
 // Authors:
 // Peter Polidoro peterpolidoro@gmail.com
 // ----------------------------------------------------------------------------
-#include "../PumpController.h"
+#include "../PumpInterface.h"
 
 
-using namespace pump_controller;
+using namespace pump_interface;
 
-PumpController::PumpController()
+PumpInterface::PumpInterface()
 {
 }
 
-void PumpController::setup()
+void PumpInterface::setup()
 {
   // Parent Setup
   SerialInterface::setup();

@@ -5,13 +5,13 @@
 // Authors:
 // Peter Polidoro peterpolidoro@gmail.com
 // ----------------------------------------------------------------------------
-#ifndef PUMP_CONTROLLER_CONSTANTS_H
-#define PUMP_CONTROLLER_CONSTANTS_H
+#ifndef PUMP_INTERFACE_CONSTANTS_H
+#define PUMP_INTERFACE_CONSTANTS_H
 #include <ConstantVariable.h>
 #include <SerialInterface.h>
 
 
-namespace pump_controller
+namespace pump_interface
 {
 namespace constants
 {

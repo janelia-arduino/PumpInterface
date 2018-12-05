@@ -1,7 +1,7 @@
-#include <PumpController.h>
+#include <PumpInterface.h>
 
 
-PumpController dev;
+PumpInterface dev;
 
 void setup()
 {

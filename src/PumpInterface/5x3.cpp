@@ -10,7 +10,7 @@
 
 #if defined(__MK64FX512__)
 
-namespace pump_controller
+namespace pump_interface
 {
 namespace constants
 {
