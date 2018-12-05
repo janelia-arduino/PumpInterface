@@ -32,6 +32,19 @@ extern const modular_server::FirmwareInfo firmware_info;
 
 // Properties
 // Property values must be long, double, bool, long[], double[], bool[], char[], ConstantString *, (ConstantString *)[]
+enum{BAUD_SUBSET_LENGTH=1};
+extern modular_server::SubsetMemberType baud_subset[BAUD_SUBSET_LENGTH];
+extern const long & baud_default;
+
+enum{FORMAT_SUBSET_LENGTH=1};
+extern modular_server::SubsetMemberType format_ptr_subset[FORMAT_SUBSET_LENGTH];
+extern const ConstantString * const format_ptr_default;
+
+enum{LINE_ENDING_SUBSET_LENGTH=1};
+extern modular_server::SubsetMemberType line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH];
+extern const ConstantString * const line_ending_ptr_default;
+
+extern const long timeout_default;
 
 // Parameters
 

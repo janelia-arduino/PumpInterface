@@ -29,6 +29,25 @@ const modular_server::FirmwareInfo firmware_info =
 // Units
 
 // Properties
+modular_server::SubsetMemberType baud_subset[BAUD_SUBSET_LENGTH] =
+{
+  {.l=9600},
+};
+const long & baud_default = baud_subset[0].l;
+
+modular_server::SubsetMemberType format_ptr_subset[FORMAT_SUBSET_LENGTH] =
+{
+  {.cs_ptr=&serial_interface::constants::format_8n1},
+};
+const ConstantString * const format_ptr_default = &serial_interface::constants::format_8n1;
+
+modular_server::SubsetMemberType line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH] =
+{
+  {.cs_ptr=&serial_interface::constants::line_ending_cr},
+};
+const ConstantString * const line_ending_ptr_default = &serial_interface::constants::line_ending_lf;
+
+const long timeout_default = 100;
 
 // Parameters
 
