@@ -31,10 +31,16 @@ const ConstantString * const formats_default[serial_interface::constants::SERIAL
   format_ptr_default,
 };
 
-const ConstantString * const line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT] =
+const ConstantString * const write_line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT] =
 {
-  line_ending_ptr_default,
-  line_ending_ptr_default,
+  write_line_ending_ptr_default,
+  write_line_ending_ptr_default,
+};
+
+const ConstantString * const read_line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT] =
+{
+  read_line_ending_ptr_default,
+  read_line_ending_ptr_default,
 };
 
 const long timeouts_default[serial_interface::constants::SERIAL_STREAM_COUNT] =

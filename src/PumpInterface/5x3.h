@@ -26,7 +26,9 @@ extern const long bauds_default[serial_interface::constants::SERIAL_STREAM_COUNT
 
 extern const ConstantString * const formats_default[serial_interface::constants::SERIAL_STREAM_COUNT];
 
-extern const ConstantString * const line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT];
+extern const ConstantString * const write_line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT];
+
+extern const ConstantString * const read_line_endings_default[serial_interface::constants::SERIAL_STREAM_COUNT];
 
 extern const long timeouts_default[serial_interface::constants::SERIAL_STREAM_COUNT];
 

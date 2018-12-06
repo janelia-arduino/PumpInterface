@@ -26,6 +26,14 @@ extern ConstantString device_name;
 extern ConstantString firmware_name;
 extern const modular_server::FirmwareInfo firmware_info;
 
+enum{REQUEST_SIZE_MAX=20};
+enum{RESPONSE_SIZE_MAX=3000};
+enum{RESPONSE_STATUS_SIZE=2};
+enum{RESPONSE_STATUS_BUFFER_SIZE=4};
+
+extern ConstantString pressure_constant_string;
+extern ConstantString flow_constant_string;
+
 // Pins
 
 // Units
@@ -41,18 +49,26 @@ extern modular_server::SubsetMemberType format_ptr_subset[FORMAT_SUBSET_LENGTH];
 extern const ConstantString * const format_ptr_default;
 
 enum{LINE_ENDING_SUBSET_LENGTH=1};
-extern modular_server::SubsetMemberType line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH];
-extern const ConstantString * const line_ending_ptr_default;
+
+extern modular_server::SubsetMemberType write_line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH];
+extern const ConstantString * const write_line_ending_ptr_default;
+
+extern ConstantString line_ending_forward_slash;
+extern modular_server::SubsetMemberType read_line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH];
+extern const ConstantString * const read_line_ending_ptr_default;
 
 extern const long timeout_default;
 
 // Parameters
 
 // Functions
+extern ConstantString get_current_conditions_function_name;
 
 // Callbacks
 
 // Errors
+extern ConstantString pump_not_communicating_error;
+extern ConstantString invalid_command_error;
 }
 }
 #include "5x3.h"

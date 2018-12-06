@@ -24,6 +24,9 @@ const modular_server::FirmwareInfo firmware_info =
   .version_patch=0,
 };
 
+CONSTANT_STRING(pressure_constant_string,"pressure");
+CONSTANT_STRING(flow_constant_string,"flow");
+
 // Pins
 
 // Units
@@ -41,20 +44,30 @@ modular_server::SubsetMemberType format_ptr_subset[FORMAT_SUBSET_LENGTH] =
 };
 const ConstantString * const format_ptr_default = &serial_interface::constants::format_8n1;
 
-modular_server::SubsetMemberType line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH] =
+modular_server::SubsetMemberType write_line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH] =
 {
   {.cs_ptr=&serial_interface::constants::line_ending_cr},
 };
-const ConstantString * const line_ending_ptr_default = &serial_interface::constants::line_ending_lf;
+const ConstantString * const write_line_ending_ptr_default = &serial_interface::constants::line_ending_cr;
+
+CONSTANT_STRING(line_ending_forward_slash,"FORWARD_SLASH");
+modular_server::SubsetMemberType read_line_ending_ptr_subset[LINE_ENDING_SUBSET_LENGTH] =
+{
+  {.cs_ptr=&line_ending_forward_slash},
+};
+const ConstantString * const read_line_ending_ptr_default = &line_ending_forward_slash;
 
 const long timeout_default = 100;
 
 // Parameters
 
 // Functions
+CONSTANT_STRING(get_current_conditions_function_name,"getCurrentConditions");
 
 // Callbacks
 
 // Errors
+CONSTANT_STRING(pump_not_communicating_error,"Pump not communicating. Check power and connections.");
+CONSTANT_STRING(invalid_command_error,"Invalid command. It does not exist or it has an invalid pattern.");
 }
 }

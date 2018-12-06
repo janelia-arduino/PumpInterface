@@ -27,6 +27,15 @@ public:
   PumpInterface();
   virtual void setup();
 
+  bool communicating();
+
+  bool getCurrentConditions(int & pressure,
+    float & flow);
+
+protected:
+
+  virtual char lineEndingToChar(const ConstantString * line_ending_ptr);
+
 private:
   modular_server::Property properties_[pump_interface::constants::PROPERTY_COUNT_MAX];
   modular_server::Parameter parameters_[pump_interface::constants::PARAMETER_COUNT_MAX];
@@ -34,16 +43,16 @@ private:
   modular_server::Callback callbacks_[pump_interface::constants::CALLBACK_COUNT_MAX];
 
   char request_[pump_interface::constants::REQUEST_SIZE_MAX];
-  char request_key_[pump_interface::constants::KEY_BUFFER_SIZE];
   char response_[pump_interface::constants::RESPONSE_SIZE_MAX];
-  char response_key_[pump_interface::constants::KEY_BUFFER_SIZE];
-  char * const response_data_ = response_ + pump_interface::constants::KEY_SIZE;
+  char response_status_[pump_interface::constants::RESPONSE_STATUS_BUFFER_SIZE];
+  char * const response_data_ = response_ + pump_interface::constants::RESPONSE_STATUS_SIZE;
 
   bool sendCommandGetResponse(const char command[]);
   size_t getResponseLength();
   void initializeRequestAndResponse();
 
   // Handlers
+  void getCurrentConditionsHandler();
 
 };
 
