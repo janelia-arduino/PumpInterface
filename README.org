@@ -4,7 +4,7 @@
 
 * Library Information
   - Name :: PumpInterface
-  - Version :: 1.0.0
+  - Version :: 1.0.1
   - License :: BSD
   - URL :: https://github.com/janelia-arduino/PumpInterface
   - Author :: Peter Polidoro

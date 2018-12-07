@@ -30,6 +30,7 @@ void PumpInterface::setup()
   // Add Hardware
 
   // Pins
+  modular_server::Pin & btn_a_pin = modular_server_.pin(modular_device_base::constants::btn_a_pin_name);
 
   // Add Firmware
   modular_server_.addFirmware(constants::firmware_info,
@@ -78,6 +79,7 @@ void PumpInterface::setup()
 
   modular_server::Callback & stop_pump_callback = modular_server_.createCallback(constants::stop_pump_callback_name);
   stop_pump_callback.attachFunctor(makeFunctor((Functor1<modular_server::Pin *> *)0,*this,&PumpInterface::stopPumpHandler));
+  stop_pump_callback.attachTo(btn_a_pin,modular_server::constants::pin_mode_interrupt_falling);
 
 }
 
@@ -279,18 +281,7 @@ void PumpInterface::getCurrentConditionsHandler()
 
 void PumpInterface::clearFaultsHandler(modular_server::Pin * pin_ptr)
 {
-  if (!communicating())
-  {
-    modular_server_.response().returnError(constants::pump_not_communicating_error);
-    return;
-  }
-
-  bool success = clearFaults();
-
-  if (!success)
-  {
-    modular_server_.response().returnError(constants::invalid_command_error);
-  }
+  clearFaults();
 }
 
 void PumpInterface::getCurrentStatusHandler()
@@ -335,32 +326,10 @@ void PumpInterface::getCurrentStatusHandler()
 
 void PumpInterface::runPumpHandler(modular_server::Pin * pin_ptr)
 {
-  if (!communicating())
-  {
-    modular_server_.response().returnError(constants::pump_not_communicating_error);
-    return;
-  }
-
-  bool success = runPump();
-
-  if (!success)
-  {
-    modular_server_.response().returnError(constants::invalid_command_error);
-  }
+  runPump();
 }
 
 void PumpInterface::stopPumpHandler(modular_server::Pin * pin_ptr)
 {
-  if (!communicating())
-  {
-    modular_server_.response().returnError(constants::pump_not_communicating_error);
-    return;
-  }
-
-  bool success = stopPump();
-
-  if (!success)
-  {
-    modular_server_.response().returnError(constants::invalid_command_error);
-  }
+  stopPump();
 }
