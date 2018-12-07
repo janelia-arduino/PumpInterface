@@ -30,15 +30,19 @@ public:
   bool communicating();
 
   bool getCurrentConditions(int & pressure,
-    float & flow);
+    float & flow_rate);
   bool clearFaults();
-  bool getCurrentStatus(float & flow,
+  bool getCurrentStatus(float & flow_rate,
     int & upper_pressure_limit,
     int & lower_pressure_limit,
     char * pressure_units,
-    bool & is_running);
+    bool & pump_is_running);
+
   bool runPump();
   bool stopPump();
+  bool pumpIsRunning(bool & pump_is_running);
+
+  bool setFlowRate(float flow_rate);
 
 protected:
 
@@ -63,8 +67,12 @@ private:
   void getCurrentConditionsHandler();
   void clearFaultsHandler(modular_server::Pin * pin_ptr);
   void getCurrentStatusHandler();
+
   void runPumpHandler(modular_server::Pin * pin_ptr);
   void stopPumpHandler(modular_server::Pin * pin_ptr);
+  void pumpIsRunningHandler();
+
+  void setFlowRateHandler();
 
 };
 

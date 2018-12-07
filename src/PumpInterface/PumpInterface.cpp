@@ -60,6 +60,8 @@ void PumpInterface::setup()
   timeouts_property.setDefaultValue(constants::timeouts_default);
 
   // Parameters
+  modular_server::Parameter & flow_rate_parameter = modular_server_.createParameter(constants::flow_rate_parameter_name);
+  flow_rate_parameter.setRange(constants::flow_rate_min,constants::flow_rate_max);
 
   // Functions
   modular_server::Function & get_current_conditions_function = modular_server_.createFunction(constants::get_current_conditions_function_name);
@@ -69,6 +71,14 @@ void PumpInterface::setup()
   modular_server::Function & get_current_status_function = modular_server_.createFunction(constants::get_current_status_function_name);
   get_current_status_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&PumpInterface::getCurrentStatusHandler));
   get_current_status_function.setResultTypeObject();
+
+  modular_server::Function & pump_is_running_function = modular_server_.createFunction(constants::pump_is_running_function_name);
+  pump_is_running_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&PumpInterface::pumpIsRunningHandler));
+  pump_is_running_function.setResultTypeBool();
+
+  modular_server::Function & set_flow_rate_function = modular_server_.createFunction(constants::set_flow_rate_function_name);
+  set_flow_rate_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&PumpInterface::setFlowRateHandler));
+  set_flow_rate_function.addParameter(flow_rate_parameter);
 
   // Callbacks
   modular_server::Callback & clear_faults_callback = modular_server_.createCallback(constants::clear_faults_callback_name);
@@ -90,7 +100,7 @@ bool PumpInterface::communicating()
 }
 
 bool PumpInterface::getCurrentConditions(int & pressure,
-  float & flow)
+  float & flow_rate)
 {
   char * current_conditions_string = response_data_;
   const char command[] = "CC";
@@ -107,7 +117,7 @@ bool PumpInterface::getCurrentConditions(int & pressure,
     }
     if (ch_ptr != NULL)
     {
-      flow = atof(ch_ptr);
+      flow_rate = atof(ch_ptr);
     }
   }
   return success;
@@ -120,11 +130,11 @@ bool PumpInterface::clearFaults()
   return success;
 }
 
-bool PumpInterface::getCurrentStatus(float & flow,
+bool PumpInterface::getCurrentStatus(float & flow_rate,
   int & upper_pressure_limit,
   int & lower_pressure_limit,
   char * pressure_units,
-  bool & is_running)
+  bool & pump_is_running)
 {
   char * current_status_string = response_data_;
   const char command[] = "CS";
@@ -136,7 +146,7 @@ bool PumpInterface::getCurrentStatus(float & flow,
     ch_ptr = strtok(current_status_string,",");
     if (ch_ptr != NULL)
     {
-      flow = atof(ch_ptr);
+      flow_rate = atof(ch_ptr);
       ch_ptr = strtok(NULL, ",");
     }
     if (ch_ptr != NULL)
@@ -161,7 +171,7 @@ bool PumpInterface::getCurrentStatus(float & flow,
     }
     if (ch_ptr != NULL)
     {
-      is_running = atoi(ch_ptr);
+      pump_is_running = atoi(ch_ptr);
     }
   }
   return success;
@@ -178,6 +188,53 @@ bool PumpInterface::stopPump()
 {
   const char command[] = "ST";
   bool success = sendCommandGetResponse(command);
+  return success;
+}
+
+bool PumpInterface::pumpIsRunning(bool & pump_is_running)
+{
+  float flow_rate;
+  int upper_pressure_limit;
+  int lower_pressure_limit;
+  char pressure_units[constants::PRESSURE_UNITS_BUFFER_SIZE];
+  pressure_units[0] = '\0';
+  bool success = getCurrentStatus(flow_rate,
+    upper_pressure_limit,
+    lower_pressure_limit,
+    pressure_units,
+    pump_is_running);
+  return success;
+}
+
+bool PumpInterface::setFlowRate(float flow_rate)
+{
+  size_t flow_rate_scaled = flow_rate * constants::flow_rate_scale_factor;
+  char flow_rate_scaled_string[constants::FLOW_RATE_SCALED_BUFFER_SIZE];
+  snprintf(flow_rate_scaled_string,constants::FLOW_RATE_SCALED_BUFFER_SIZE,"%05d",flow_rate_scaled);
+
+  char command[constants::FLOW_RATE_COMMAND_BUFFER_SIZE];
+  strcpy(command,"FI");
+  strcat(command,flow_rate_scaled_string);
+
+  bool success = sendCommandGetResponse(command);
+  char * flow_rate_response_string = response_data_;
+
+  if (success)
+  {
+    char * ch_ptr;
+    ch_ptr = strtok(flow_rate_response_string,":");
+    if (ch_ptr != NULL)
+    {
+      ch_ptr = strtok(NULL, "");
+    }
+    if (ch_ptr != NULL)
+    {
+      if (strcmp(ch_ptr,flow_rate_scaled_string) != 0)
+      {
+        success = false;
+      }
+    }
+  }
   return success;
 }
 
@@ -258,9 +315,9 @@ void PumpInterface::getCurrentConditionsHandler()
   }
 
   int pressure;
-  float flow;
+  float flow_rate;
   bool success = getCurrentConditions(pressure,
-    flow);
+    flow_rate);
 
   if (success)
   {
@@ -269,7 +326,7 @@ void PumpInterface::getCurrentConditionsHandler()
     modular_server_.response().beginObject();
 
     modular_server_.response().write(constants::pressure_constant_string,pressure);
-    modular_server_.response().write(constants::flow_constant_string,flow);
+    modular_server_.response().write(constants::flow_rate_constant_string,flow_rate);
 
     modular_server_.response().endObject();
   }
@@ -292,17 +349,17 @@ void PumpInterface::getCurrentStatusHandler()
     return;
   }
 
-  float flow;
+  float flow_rate;
   int upper_pressure_limit;
   int lower_pressure_limit;
   char pressure_units[constants::PRESSURE_UNITS_BUFFER_SIZE];
   pressure_units[0] = '\0';
-  bool is_running;
-  bool success = getCurrentStatus(flow,
+  bool pump_is_running;
+  bool success = getCurrentStatus(flow_rate,
     upper_pressure_limit,
     lower_pressure_limit,
     pressure_units,
-    is_running);
+    pump_is_running);
 
   if (success)
   {
@@ -310,11 +367,11 @@ void PumpInterface::getCurrentStatusHandler()
 
     modular_server_.response().beginObject();
 
-    modular_server_.response().write(constants::flow_constant_string,flow);
+    modular_server_.response().write(constants::flow_rate_constant_string,flow_rate);
     modular_server_.response().write(constants::upper_pressure_limit_constant_string,upper_pressure_limit);
     modular_server_.response().write(constants::lower_pressure_limit_constant_string,lower_pressure_limit);
     modular_server_.response().write(constants::pressure_units_constant_string,pressure_units);
-    modular_server_.response().write(constants::is_running_constant_string,is_running);
+    modular_server_.response().write(constants::pump_is_running_constant_string,pump_is_running);
 
     modular_server_.response().endObject();
   }
@@ -332,4 +389,38 @@ void PumpInterface::runPumpHandler(modular_server::Pin * pin_ptr)
 void PumpInterface::stopPumpHandler(modular_server::Pin * pin_ptr)
 {
   stopPump();
+}
+
+void PumpInterface::pumpIsRunningHandler()
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  bool pump_is_running;
+  bool success = pumpIsRunning(pump_is_running);
+  if (!success)
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
+  modular_server_.response().returnResult(pump_is_running);
+}
+
+void PumpInterface::setFlowRateHandler()
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  double flow_rate;
+  modular_server_.parameter(constants::flow_rate_parameter_name).getValue(flow_rate);
+  bool success = setFlowRate(flow_rate);
+  if (!success)
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
 }

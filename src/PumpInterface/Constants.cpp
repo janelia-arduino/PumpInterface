@@ -20,16 +20,18 @@ const modular_server::FirmwareInfo firmware_info =
 {
   .name_ptr=&firmware_name,
   .version_major=1,
-  .version_minor=0,
-  .version_patch=1,
+  .version_minor=1,
+  .version_patch=0,
 };
 
 CONSTANT_STRING(pressure_constant_string,"pressure");
-CONSTANT_STRING(flow_constant_string,"flow");
+CONSTANT_STRING(flow_rate_constant_string,"flow_rate");
 CONSTANT_STRING(upper_pressure_limit_constant_string,"upper_pressure_limit");
 CONSTANT_STRING(lower_pressure_limit_constant_string,"lower_pressure_limit");
 CONSTANT_STRING(pressure_units_constant_string,"pressure_units");
-CONSTANT_STRING(is_running_constant_string,"is_running");
+CONSTANT_STRING(pump_is_running_constant_string,"pump_is_running");
+
+const size_t flow_rate_scale_factor = 100;
 
 // Pins
 
@@ -64,10 +66,15 @@ const ConstantString * const read_line_ending_ptr_default = &line_ending_forward
 const long timeout_default = 100;
 
 // Parameters
+CONSTANT_STRING(flow_rate_parameter_name,"flow_rate");
+const double flow_rate_min = 0.1;
+const double flow_rate_max = 300.0;
 
 // Functions
 CONSTANT_STRING(get_current_conditions_function_name,"getCurrentConditions");
 CONSTANT_STRING(get_current_status_function_name,"getCurrentStatus");
+CONSTANT_STRING(pump_is_running_function_name,"pumpIsRunning");
+CONSTANT_STRING(set_flow_rate_function_name,"setFlowRate");
 
 // Callbacks
 CONSTANT_STRING(clear_faults_callback_name,"clearFaults");

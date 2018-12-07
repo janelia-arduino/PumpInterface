@@ -18,7 +18,7 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{PROPERTY_COUNT_MAX=1};
 enum{PARAMETER_COUNT_MAX=1};
-enum{FUNCTION_COUNT_MAX=2};
+enum{FUNCTION_COUNT_MAX=4};
 enum{CALLBACK_COUNT_MAX=3};
 
 extern ConstantString device_name;
@@ -32,13 +32,17 @@ enum{RESPONSE_STATUS_SIZE=2};
 enum{RESPONSE_STATUS_BUFFER_SIZE=4};
 enum{PRESSURE_UNITS_SIZE=3};
 enum{PRESSURE_UNITS_BUFFER_SIZE=4};
+enum{FLOW_RATE_SCALED_BUFFER_SIZE=6};
+enum{FLOW_RATE_COMMAND_BUFFER_SIZE=8};
 
 extern ConstantString pressure_constant_string;
-extern ConstantString flow_constant_string;
+extern ConstantString flow_rate_constant_string;
 extern ConstantString upper_pressure_limit_constant_string;
 extern ConstantString lower_pressure_limit_constant_string;
 extern ConstantString pressure_units_constant_string;
-extern ConstantString is_running_constant_string;
+extern ConstantString pump_is_running_constant_string;
+
+extern const size_t flow_rate_scale_factor;
 
 // Pins
 
@@ -66,10 +70,15 @@ extern const ConstantString * const read_line_ending_ptr_default;
 extern const long timeout_default;
 
 // Parameters
+extern ConstantString flow_rate_parameter_name;
+extern const double flow_rate_min;
+extern const double flow_rate_max;
 
 // Functions
 extern ConstantString get_current_conditions_function_name;
 extern ConstantString get_current_status_function_name;
+extern ConstantString pump_is_running_function_name;
+extern ConstantString set_flow_rate_function_name;
 
 // Callbacks
 extern ConstantString clear_faults_callback_name;

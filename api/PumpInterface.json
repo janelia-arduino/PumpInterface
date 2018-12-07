@@ -17,6 +17,24 @@
         "result_info": {
           "type": "object"
         }
+      },
+      {
+        "name": "pumpIsRunning",
+        "result_info": {
+          "type": "bool"
+        }
+      },
+      {
+        "name": "setFlowRate",
+        "parameters": [
+          "flow_rate"
+        ]
+      }
+    ],
+    "parameters": [
+      {
+        "name": "flow_rate",
+        "type": "double"
       }
     ],
     "callbacks": [
