@@ -18,8 +18,8 @@ namespace constants
 //MAX values must be >= 1, >= created/copied count, < RAM limit
 enum{PROPERTY_COUNT_MAX=1};
 enum{PARAMETER_COUNT_MAX=1};
-enum{FUNCTION_COUNT_MAX=1};
-enum{CALLBACK_COUNT_MAX=1};
+enum{FUNCTION_COUNT_MAX=2};
+enum{CALLBACK_COUNT_MAX=3};
 
 extern ConstantString device_name;
 
@@ -30,9 +30,15 @@ enum{REQUEST_SIZE_MAX=20};
 enum{RESPONSE_SIZE_MAX=3000};
 enum{RESPONSE_STATUS_SIZE=2};
 enum{RESPONSE_STATUS_BUFFER_SIZE=4};
+enum{PRESSURE_UNITS_SIZE=3};
+enum{PRESSURE_UNITS_BUFFER_SIZE=4};
 
 extern ConstantString pressure_constant_string;
 extern ConstantString flow_constant_string;
+extern ConstantString upper_pressure_limit_constant_string;
+extern ConstantString lower_pressure_limit_constant_string;
+extern ConstantString pressure_units_constant_string;
+extern ConstantString is_running_constant_string;
 
 // Pins
 
@@ -63,8 +69,12 @@ extern const long timeout_default;
 
 // Functions
 extern ConstantString get_current_conditions_function_name;
+extern ConstantString get_current_status_function_name;
 
 // Callbacks
+extern ConstantString clear_faults_callback_name;
+extern ConstantString run_pump_callback_name;
+extern ConstantString stop_pump_callback_name;
 
 // Errors
 extern ConstantString pump_not_communicating_error;

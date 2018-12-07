@@ -65,7 +65,20 @@ void PumpInterface::setup()
   get_current_conditions_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&PumpInterface::getCurrentConditionsHandler));
   get_current_conditions_function.setResultTypeObject();
 
+  modular_server::Function & get_current_status_function = modular_server_.createFunction(constants::get_current_status_function_name);
+  get_current_status_function.attachFunctor(makeFunctor((Functor0 *)0,*this,&PumpInterface::getCurrentStatusHandler));
+  get_current_status_function.setResultTypeObject();
+
   // Callbacks
+  modular_server::Callback & clear_faults_callback = modular_server_.createCallback(constants::clear_faults_callback_name);
+  clear_faults_callback.attachFunctor(makeFunctor((Functor1<modular_server::Pin *> *)0,*this,&PumpInterface::clearFaultsHandler));
+
+  modular_server::Callback & run_pump_callback = modular_server_.createCallback(constants::run_pump_callback_name);
+  run_pump_callback.attachFunctor(makeFunctor((Functor1<modular_server::Pin *> *)0,*this,&PumpInterface::runPumpHandler));
+
+  modular_server::Callback & stop_pump_callback = modular_server_.createCallback(constants::stop_pump_callback_name);
+  stop_pump_callback.attachFunctor(makeFunctor((Functor1<modular_server::Pin *> *)0,*this,&PumpInterface::stopPumpHandler));
+
 }
 
 bool PumpInterface::communicating()
@@ -98,6 +111,76 @@ bool PumpInterface::getCurrentConditions(int & pressure,
   return success;
 }
 
+bool PumpInterface::clearFaults()
+{
+  const char command[] = "CF";
+  bool success = sendCommandGetResponse(command);
+  return success;
+}
+
+bool PumpInterface::getCurrentStatus(float & flow,
+  int & upper_pressure_limit,
+  int & lower_pressure_limit,
+  char * pressure_units,
+  bool & is_running)
+{
+  char * current_status_string = response_data_;
+  const char command[] = "CS";
+  bool success = sendCommandGetResponse(command);
+
+  if (success)
+  {
+    char * ch_ptr;
+    ch_ptr = strtok(current_status_string,",");
+    if (ch_ptr != NULL)
+    {
+      flow = atof(ch_ptr);
+      ch_ptr = strtok(NULL, ",");
+    }
+    if (ch_ptr != NULL)
+    {
+      upper_pressure_limit = atoi(ch_ptr);
+      ch_ptr = strtok(NULL, ",");
+    }
+    if (ch_ptr != NULL)
+    {
+      lower_pressure_limit = atoi(ch_ptr);
+      ch_ptr = strtok(NULL, ",");
+    }
+    if (ch_ptr != NULL)
+    {
+      strncpy(pressure_units,ch_ptr,constants::PRESSURE_UNITS_SIZE);
+      pressure_units[constants::PRESSURE_UNITS_SIZE] = '\0';
+      ch_ptr = strtok(NULL, ",");
+    }
+    if (ch_ptr != NULL)
+    {
+      ch_ptr = strtok(NULL, ",");
+    }
+    if (ch_ptr != NULL)
+    {
+      is_running = atoi(ch_ptr);
+    }
+  }
+  return success;
+}
+
+bool PumpInterface::runPump()
+{
+  const char command[] = "RU";
+  bool success = sendCommandGetResponse(command);
+  return success;
+}
+
+bool PumpInterface::stopPump()
+{
+  const char command[] = "ST";
+  bool success = sendCommandGetResponse(command);
+  return success;
+}
+
+// Protected
+
 char PumpInterface::lineEndingToChar(const ConstantString * line_ending_ptr)
 {
   char line_ending_char = SerialInterface::lineEndingToChar(line_ending_ptr);
@@ -107,6 +190,8 @@ char PumpInterface::lineEndingToChar(const ConstantString * line_ending_ptr)
   }
   return line_ending_char;
 }
+
+// Private
 
 bool PumpInterface::sendCommandGetResponse(const char command[])
 {
@@ -172,7 +257,8 @@ void PumpInterface::getCurrentConditionsHandler()
 
   int pressure;
   float flow;
-  bool success = getCurrentConditions(pressure,flow);
+  bool success = getCurrentConditions(pressure,
+    flow);
 
   if (success)
   {
@@ -186,6 +272,94 @@ void PumpInterface::getCurrentConditionsHandler()
     modular_server_.response().endObject();
   }
   else
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
+}
+
+void PumpInterface::clearFaultsHandler(modular_server::Pin * pin_ptr)
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  bool success = clearFaults();
+
+  if (!success)
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
+}
+
+void PumpInterface::getCurrentStatusHandler()
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  float flow;
+  int upper_pressure_limit;
+  int lower_pressure_limit;
+  char pressure_units[constants::PRESSURE_UNITS_BUFFER_SIZE];
+  pressure_units[0] = '\0';
+  bool is_running;
+  bool success = getCurrentStatus(flow,
+    upper_pressure_limit,
+    lower_pressure_limit,
+    pressure_units,
+    is_running);
+
+  if (success)
+  {
+    modular_server_.response().writeResultKey();
+
+    modular_server_.response().beginObject();
+
+    modular_server_.response().write(constants::flow_constant_string,flow);
+    modular_server_.response().write(constants::upper_pressure_limit_constant_string,upper_pressure_limit);
+    modular_server_.response().write(constants::lower_pressure_limit_constant_string,lower_pressure_limit);
+    modular_server_.response().write(constants::pressure_units_constant_string,pressure_units);
+    modular_server_.response().write(constants::is_running_constant_string,is_running);
+
+    modular_server_.response().endObject();
+  }
+  else
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
+}
+
+void PumpInterface::runPumpHandler(modular_server::Pin * pin_ptr)
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  bool success = runPump();
+
+  if (!success)
+  {
+    modular_server_.response().returnError(constants::invalid_command_error);
+  }
+}
+
+void PumpInterface::stopPumpHandler(modular_server::Pin * pin_ptr)
+{
+  if (!communicating())
+  {
+    modular_server_.response().returnError(constants::pump_not_communicating_error);
+    return;
+  }
+
+  bool success = stopPump();
+
+  if (!success)
   {
     modular_server_.response().returnError(constants::invalid_command_error);
   }

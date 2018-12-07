@@ -26,6 +26,10 @@ const modular_server::FirmwareInfo firmware_info =
 
 CONSTANT_STRING(pressure_constant_string,"pressure");
 CONSTANT_STRING(flow_constant_string,"flow");
+CONSTANT_STRING(upper_pressure_limit_constant_string,"upper_pressure_limit");
+CONSTANT_STRING(lower_pressure_limit_constant_string,"lower_pressure_limit");
+CONSTANT_STRING(pressure_units_constant_string,"pressure_units");
+CONSTANT_STRING(is_running_constant_string,"is_running");
 
 // Pins
 
@@ -63,8 +67,12 @@ const long timeout_default = 100;
 
 // Functions
 CONSTANT_STRING(get_current_conditions_function_name,"getCurrentConditions");
+CONSTANT_STRING(get_current_status_function_name,"getCurrentStatus");
 
 // Callbacks
+CONSTANT_STRING(clear_faults_callback_name,"clearFaults");
+CONSTANT_STRING(run_pump_callback_name,"runPump");
+CONSTANT_STRING(stop_pump_callback_name,"stopPump");
 
 // Errors
 CONSTANT_STRING(pump_not_communicating_error,"Pump not communicating. Check power and connections.");

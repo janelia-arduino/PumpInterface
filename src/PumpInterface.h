@@ -31,6 +31,14 @@ public:
 
   bool getCurrentConditions(int & pressure,
     float & flow);
+  bool clearFaults();
+  bool getCurrentStatus(float & flow,
+    int & upper_pressure_limit,
+    int & lower_pressure_limit,
+    char * pressure_units,
+    bool & is_running);
+  bool runPump();
+  bool stopPump();
 
 protected:
 
@@ -53,6 +61,10 @@ private:
 
   // Handlers
   void getCurrentConditionsHandler();
+  void clearFaultsHandler(modular_server::Pin * pin_ptr);
+  void getCurrentStatusHandler();
+  void runPumpHandler(modular_server::Pin * pin_ptr);
+  void stopPumpHandler(modular_server::Pin * pin_ptr);
 
 };
 
