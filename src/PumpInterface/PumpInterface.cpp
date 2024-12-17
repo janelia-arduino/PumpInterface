@@ -5,7 +5,7 @@
 // Authors:
 // Peter Polidoro peter@polidoro.io
 // ----------------------------------------------------------------------------
-#include "../PumpInterface.h"
+#include "PumpInterface.h"
 
 
 using namespace pump_interface;
